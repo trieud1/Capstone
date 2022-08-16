@@ -1,0 +1,25 @@
+train<-read.csv(file.choose(),header=TRUE)
+test<-train[split[150655:188318],]
+train<-train[split[1:150655],]
+split<-sample(1:188318,188318)
+kaggletest<-read.csv(file.choose(),header=TRUE)
+
+cormat<-cor(train[,118:131],train[,118:131])
+corrplot(cormat)
+
+
+
+drop<-c('cont9','cont12','cont10','id')
+train<-train[,!(names(train)%in%drop)]
+train$loss<-log(train$loss)
+
+
+
+rf3<-ranger(loss ~., data=train, importance='impurity', verbose= TRUE,mtry=20)
+
+predict3<-predict(rf3,data=kaggletest)
+predict3$predictions<-exp(predict3$predictions)
+write.csv(data.frame(id=kaggletest$id,loss=predict3$predictions),'newnew.csv',row.names=FALSE)
+
+variables<-c(sort(rf3$variable.importance, decreasing=FALSE)[1:25])
+barchart(variables, xlab='Variable Importance',ylab='Variables')
