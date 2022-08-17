@@ -1,0 +1,40 @@
+1)
+pset<-read.csv("HNSCC_Exp.csv",sep=',',header=TRUE) matrix<-as.matrix(pset[2:70])
+2)
+k<-1
+pvalue<-c()
+for(i in 1:16330){
+tStat<-t.test(matrix[i,1:44],matrix[i,45:69]) pvalue[k]<-tStat$p.value
+k<-k+1
+} hist(pvalue,freq=TRUE)
+Figure 1: Histogram of P-values
+3)
+procedures<-c("bonferroni","holm","hochberg","bh") correction<-mt.rawp2adjp(pvalue,procedures, alpha = 0.05, na.rm=FALSE) correctedP<-correction$adjp bonf<-nrow(subset(correctedP,correctedP[,2]<.05))
+bonf Holm<-nrow(subset(correctedP,correctedP[,3]<.05))
+ 
+Holm
+Hochberg<-nrow(subset(correctedP,correctedP[,4]<.05))
+Hochberg
+BH<-nrow(subset(correctedP,correctedP[,5]<.05))
+BH
+980 variables survived using the Bonferroni correction, 991 variables survived in both the holm and Hochberg methods and 4154 survived using the Benjamin-Hochberg method.
+4)
+Delta value = 5.4
+Figure 2 Final SAM Plot
+      Table 1: Significant Genes
+
+You can see the 20 most significant genes ( using Bonferroni correction) in table 1. The first 9 being the significant positives. We calculated the average FDR to be 0.07%, this is very good. This means we would expect 0.014 genes from table 1 to be falsely classified.
+> library(samr) > runSAM()
+bonf sig<-
+sig
+}}
+bon correction$adj[bon,2]
+ correction<-mt.rawp2adjp(pvalue, proc=c("Bonferroni"), alpha = 0.05, na.rm = FALSE)
+ correctedP<-correction$adjp
+ bonf<-nrow(subset(correctedP,correctedP[,2]<.05))
+ c(1873,4034,10098,10096,16118,1931,5072,6891,1331,13813,4322,13313,1599,1090,
+ 6449,691,4915,13009,2061,5836)
+ bon<-c()
+ for(i in 1:20){for(k in 1:16330){
+ if(correction$index[k]==sig[i])
+ bon[i]<-k
