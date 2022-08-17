@@ -1,0 +1,36 @@
+bank<-read.csv(file.choose(), header = TRUE)
+train1<-subset(bank, bank[,3] == 1)
+train0<-subset(bank,bank[,3]==0)
+train1.8<-train1[sample(1:610,488),]
+train0.8<-train0[sample(1:762,610),]
+train<-rbind(train1.8,train0.8)
+test1<-train1[sample(1:610,122),]
+test0<-train0[sample(1:762,153),]
+test<-rbind(test1,test0)
+set.seed(1)
+class<-svm(train$Class ~ ., data=train,typ='C-classification',kernel='linear')
+prediction<-predict(class, newdata=test)
+predtable<-table(test[,3],prediction)
+plot(class,train)
+#2
+class1<-svm(train$Class ~ ., data=train,typ='C-classification',kernel='radial')
+prediction1<-predict(class1,newdata=test)
+pred1table<-table(test[,3],prediction1)
+plot(class1,train)
+#3
+tree<-rpart(train$Class~.,data=train,method='class',cp=0)
+rpart.plot(tree)
+prediction2<-predict(tree,test,type='class')
+printcp(tree)
+pred2table<-table(test[,3],prediction2)
+accuracy1<-mean(prediction2==test$Class)
+prunetree<-prune(tree,cp=0.01)
+rpart.plot(prunetree)
+prediction3<-predict(prunetree,test,type='class')
+pred3table<-table(test[,3],prediction3)
+printcp(prunetree)
+accuracy2<-mean(prediction3==test$Class)
+tree
+gini<-(1-((578/1098)^2)-(520/1098)^2)
+
+
